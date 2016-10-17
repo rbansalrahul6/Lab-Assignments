@@ -1,5 +1,3 @@
-/* assuming arrival time starts from 0
-and is in sorted order*/
 #include <iostream>
 using namespace std;
 int main() {
@@ -21,13 +19,23 @@ int main() {
 	bool status[n];
 	for(int i=0;i<n;i++)
 		status[i]=false;
-	clk+=bur[0];
-	status[0]=true;
-	order[count]=1;
+	//finding starting process
+	int first=0,arr_first=arr[0],bur_first=bur[0];
+	for(int i=1;i<n;i++) {
+		if(arr[i]<arr_first || (arr[i]==arr_first && bur[i]<bur_first))
+		{
+			arr_first=arr[i];
+			first=i;
+			bur_first=bur[i];
+		}
+	}
+	clk=bur_first;      //check this line
+	status[first]=true;
+	order[count]=first+1;
 	count++;
 	while(count!=n) {
 		int min=9999,loc=-1;
-	for(int i=1;i<n;i++) {
+	for(int i=0;i<n;i++) {
 		if(status[i]==false && arr[i]<=clk && bur[i]<min)
 		{
 			min=bur[i];
@@ -52,6 +60,7 @@ int main() {
 	cout<<"Order:"<<endl;
 	for(int i=0;i<n;i++)
 		cout<<order[i]<<" ";
+	cout<<endl;
 	return 0;
 }
 

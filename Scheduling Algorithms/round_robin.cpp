@@ -1,5 +1,3 @@
-/* assuming arrival time starts from 0
-and is in sorted order*/
 #include <iostream>
 using namespace std;
 int main()
@@ -24,6 +22,17 @@ int main()
 		rem[i]=bur[i];
 		status[i]=false;
 	}
+	//finding first process , arrival time don't start from 0
+	int first=0,arr_first=arr[0];
+	for(int i=1;i<n;i++)
+	{
+		if(arr[i]<arr_first)
+		{
+			arr_first=arr[i];
+			first=i;
+		}
+	}
+	clk=arr_first;
 		for(int i=0;count!=n;i=(i+1)%n) {
 			if(status[i]==true) {
 				//do nothing,move to next
@@ -56,6 +65,7 @@ int main()
 	cout<<endl<<"waiting times: ";
 	for(int i=0;i<n;i++)
 		cout<<wait[i]<<" ";
+	cout<<endl;
 	//debug
 	/*cout<<endl;
 	for(int i=0;i<n;i++)
