@@ -7,6 +7,7 @@ struct process
 	int arr_time;
 	int burst_time;
 	int priority;          //LOW NUMBER MEANS HIGH PRIORITY
+	int wait_time;
 };
 bool process_sorter(const process& lhs,const process& rhs)
 {
@@ -38,7 +39,8 @@ int main()
 	{
 		if(p[i].arr_time>clk)
 			clk=p[i].arr_time;
-		tw+=clk-p[i].arr_time;
+		p[i].wait_time=clk-p[i].arr_time;
+		tw+=p[i].wait_time;
 		clk+=p[i].burst_time;
 	}
 	avg_wait=1.0*tw/n;
@@ -46,9 +48,8 @@ int main()
 	cout<<"order"<<endl;
 	for(int i=0;i<n;i++)
 	{
-		cout<<p[i].pid<<" ";
+		cout<<p[i].pid<<" "<<p[i].wait_time<<endl;;
 	}
-	cout<<endl;
 	cout<<"Average waiting time "<<avg_wait<<endl;
 	return 0;
 }

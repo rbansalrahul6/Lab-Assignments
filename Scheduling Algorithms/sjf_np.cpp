@@ -1,32 +1,41 @@
 #include <iostream>
 using namespace std;
+struct process
+{
+	int pid;
+	int arr_time;
+	int burst_time;
+	int wait_time;
+};
 int main() {
 	int n;
 	cout<<"Enter number of processes"<<endl;
 	cin>>n;
-	int arr[n],bur[n],clk=0,tw=0,count=0,order[n];
+	process p[n];
+	int clk=0,tw=0,count=0,order[n];
 	float aw;
 	//details of processes
 	for(int i=0;i<n;i++) {
+		p[i].pid=i+1;
 		cout<<"Process: "<<i+1<<endl;
 		cout<<"Enter arrival time ";
-		cin>>arr[i];
+		cin>>p[i].arr_time;
 		//cout<<endl;
 		cout<<"Enter burst time ";
-		cin>>bur[i];
+		cin>>p[i].burst_time;
 		//cout<<endl;
 	}
 	bool status[n];
 	for(int i=0;i<n;i++)
 		status[i]=false;
 	//finding starting process
-	int first=0,arr_first=arr[0],bur_first=bur[0];
+	int first=0,arr_first=p[0].arr_time,bur_first=p[0].burst_time;
 	for(int i=1;i<n;i++) {
-		if(arr[i]<arr_first || (arr[i]==arr_first && bur[i]<bur_first))
+		if(p[i].arr_time<arr_first || (p[i].arr_time==arr_first && p[i].burst_time<bur_first))
 		{
-			arr_first=arr[i];
+			arr_first=p[i].arr_time;
 			first=i;
-			bur_first=bur[i];
+			bur_first=p[i].burst_time;
 		}
 	}
 	clk=bur_first;      //check this line
@@ -36,18 +45,19 @@ int main() {
 	while(count!=n) {
 		int min=9999,loc=-1;
 	for(int i=0;i<n;i++) {
-		if(status[i]==false && arr[i]<=clk && bur[i]<min)
+		if(status[i]==false && p[i].arr_time<=clk && p[i].burst_time<min)
 		{
-			min=bur[i];
+			min=p[i].burst_time;
 			loc=i;
 		}
 	}
 	if(loc==-1)
-		clk=arr[count];
+		clk=p[count].arr_time;
 	else
 	{
 		status[loc]=true;
-		tw+=(clk-arr[loc]);
+		p[loc].wait_time=clk-p[loc].arr_time;
+		tw+=p[loc].wait_time;
 		clk+=min;
 		order[count]=loc+1;
 		count++;

@@ -1,34 +1,43 @@
 #include <iostream>
 using namespace std;
+struct process
+{
+	int pid;
+	int arr_time;
+	int burst_time;
+	int wait_time;
+};
 int main()
 {
 	int n;
 	cout<<"Enter number of processes"<<endl;
 	cin>>n;
-	int arr[n],bur[n],clk=0,tw=0,count=0,order[n],tq,rem[n],ta[n],wait[n];
+	process p[n];
+	int clk=0,tw=0,count=0,order[n],tq,rem[n],ta[n],wait[n];
 	float aw;
 	//details of processes
 	for(int i=0;i<n;i++) {
+		p[i].pid=i+1;
 		cout<<"Process: "<<i+1<<endl;
 		cout<<"Enter arrival time ";
-		cin>>arr[i];
+		cin>>p[i].arr_time;
 		cout<<"Enter burst time ";
-		cin>>bur[i];
+		cin>>p[i].burst_time;
 	}
 	cout<<"Enter time quantum"<<endl;
 	cin>>tq;
 	bool status[n];
 	for(int i=0;i<n;i++) {
-		rem[i]=bur[i];
+		rem[i]=p[i].burst_time;
 		status[i]=false;
 	}
 	//finding first process , arrival time don't start from 0
-	int first=0,arr_first=arr[0];
+	int first=0,arr_first=p[0].arr_time;
 	for(int i=1;i<n;i++)
 	{
-		if(arr[i]<arr_first)
+		if(p[i].arr_time<arr_first)
 		{
-			arr_first=arr[i];
+			arr_first=p[i].arr_time;
 			first=i;
 		}
 	}
@@ -38,7 +47,7 @@ int main()
 				//do nothing,move to next
 				continue;
 			}
-			else if(arr[i]<=clk) {
+			else if(p[i].arr_time<=clk) {
 				//debug;gantt chart
 				cout<<i+1<<" ";
 				//allot quantum
@@ -53,18 +62,18 @@ int main()
 				//check for status ;last quantum alloted
 				if(rem[i]==0) {
 					status[i]=true;
-					ta[i]=clk-arr[i];
+					ta[i]=clk-p[i].arr_time;
 					count++;
 				}
 			}
 		}
 	//calculating waiing times
 	for(int i=0;i<n;i++)
-		wait[i]=ta[i]-bur[i];
+		p[i].wait_time=ta[i]-p[i].burst_time;
 	//printing waiting times
 	cout<<endl<<"waiting times: ";
 	for(int i=0;i<n;i++)
-		cout<<wait[i]<<" ";
+		cout<<p[i].wait_time<<" ";
 	cout<<endl;
 	//debug
 	/*cout<<endl;
