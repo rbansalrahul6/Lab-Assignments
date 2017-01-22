@@ -1,0 +1,6 @@
+# compiled sources #
+*.o
+*.exe
+*.out
+*.class
+*.Rhistory
