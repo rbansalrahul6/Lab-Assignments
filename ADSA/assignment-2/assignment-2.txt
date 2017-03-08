@@ -1,0 +1,7 @@
+Lab Assignment 2
+Write a code chunk for binary min-heap with the following operations:
+is_empty();
+insert();
+find_min();
+delete_min();
+decrease_key();
