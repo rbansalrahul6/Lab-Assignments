@@ -8,4 +8,9 @@ class State
 		num = n;
 		isEnd = false;
 	}
+	public State(int n,boolean b)
+	{
+		num = n;
+		isEnd = b;
+	}
 }

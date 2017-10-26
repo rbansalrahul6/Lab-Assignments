@@ -18,5 +18,7 @@ class Test
 			System.out.println("accepted");
 		else
 			System.out.println("rejected");
+		//DFA testig
+		nfa.toDFA();
 	}
 }

@@ -2,6 +2,7 @@ import java.util.*;
 class NFA extends PartialNFA
 {
 	private static final char EPS = '$';
+	private char[] alphabet = new char[]{'a','b'};
 	private int stateCount;
 	public HashMap<State,ArrayList<Edge> > graph;
 	public NFA()
@@ -103,11 +104,26 @@ class NFA extends PartialNFA
 		start = pnfa.start;
 		end = pnfa.end;
 	}
+	//method to find a transition
+	State move(State s,char in)
+	{
+		State out = null;
+		ArrayList<Edge> edges = graph.get(s);
+		for(Edge e : edges)
+		{
+			if(e.input == in)
+			{
+				out = e.out;
+				break;
+			}
+		}
+		return out;
+	}
 
 	//method to find eps-closure of NFA
 	void addState(State s,HashSet<State> st)
 	{
-		if(st.contains(s))
+		if(s == null || st.contains(s))
 			return;
 		st.add(s);
 		ArrayList<Edge> edges = graph.get(s);
@@ -118,6 +134,12 @@ class NFA extends PartialNFA
 			if(val == EPS)
 				addState(sout,st);
 		}
+	}
+	HashSet<State> EPSClos(State s)
+	{
+		HashSet<State> epsc = new HashSet<State>();
+		addState(s,epsc);
+		return epsc;
 	}
 	//method to simulate NFA
 	boolean simulate(String q)
@@ -162,6 +184,80 @@ class NFA extends PartialNFA
 				System.out.print("(" + e.input + "," + e.out.num + ") ");
 			}
 			System.out.println();
+		}
+	}
+	//testing
+	//convert to dfa
+	boolean isFinal(Set<State> st)
+	{
+		for(State s : st)
+		{
+			if(s.isEnd)
+				return true;
+		}
+		return false;
+	}
+
+	void toDFA()
+	{
+		int count = -1;
+		int size = alphabet.length;
+		Set<State> NFAstates = graph.keySet();
+		//Set<DFAState> DFAStateSet = new HashSet<DFAState>();
+		Map<Set<State>,State> DFAStateSet = new HashMap<Set<State>,State>();  //doubt
+		ArrayList<int[]> transTable = new ArrayList<int[]>();
+		/*List<State> states = new ArrayList<State>(NFAstates);
+		Collections.sort(states,new Comparator<State>(){
+			public int compare(State s1,State s2)
+			{
+				return (s1.num < s2.num ? -1 : 1);
+			}
+		});
+
+		for(State s : states)
+		{
+			System.out.println(s.num);
+		}*/
+		//get eps-clos of starting state
+		Queue<Set<State>> q = new LinkedList<Set<State>>();
+		HashSet<State> startEPSClos = EPSClos(start);
+		transTable.add(new int[size]);
+		count++;
+		DFAStateSet.put(startEPSClos,new State(count));
+		q.add(startEPSClos);
+		while(!q.isEmpty())
+		{
+			Set<State> curr = q.poll();
+			for(int i=0;i<size;i++)
+			{
+				HashSet<State> next = new HashSet<State>();
+				for(State s : curr)
+				{
+					addState(move(s,alphabet[i]),next);
+				}
+				if(!DFAStateSet.containsKey(next))
+				{
+					count++;
+					transTable.add(new int[size]);
+					boolean label = isFinal(next);
+					DFAStateSet.put(next,new State(count,label));
+					//transTable.get(DFAStateSet.get(curr))[i] = count;
+					q.add(next);
+				}
+				transTable.get(DFAStateSet.get(curr).num)[i] = DFAStateSet.get(next).num;
+			}
+		}
+		System.out.println("done");
+		//print table
+		for(int[] row : transTable)
+		{
+			for(int i : row)
+				System.out.print(i + " ");
+			System.out.println();
+		}
+		for(State s : DFAStateSet.values())
+		{
+			System.out.println(s.num + "," + s.isEnd);
 		}
 	}
 }
