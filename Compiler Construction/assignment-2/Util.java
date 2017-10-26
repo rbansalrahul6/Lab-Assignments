@@ -2,6 +2,8 @@ import java.util.*;
 
 class Util
 {
+	private static Set<Character> OPS = new HashSet<Character>(Arrays.asList('*','.','|'));
+
 	public static int priority(char c)
 	{
 		switch(c)
@@ -69,5 +71,16 @@ class Util
 			res+=ch[i];
 	}
 	return res;
+	}
+
+	public static Set<Character> getAlphabets(String pf)
+	{
+		Set<Character> alphaSet = new HashSet<Character>();
+		for(int i=0;i<pf.length();i++)
+		{
+			if(!OPS.contains(pf.charAt(i)))
+				alphaSet.add(pf.charAt(i));
+		}
+		return alphaSet;
 	}
 }

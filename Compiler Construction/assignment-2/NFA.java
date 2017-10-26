@@ -2,9 +2,10 @@ import java.util.*;
 class NFA extends PartialNFA
 {
 	private static final char EPS = '$';
-	private char[] alphabet = new char[]{'a','b'};
+	private ArrayList<Character> alphabet;
 	private int stateCount;
 	public HashMap<State,ArrayList<Edge> > graph;
+
 	public NFA()
 	{
 		stateCount = 0;
@@ -18,7 +19,8 @@ class NFA extends PartialNFA
 		graph.put(st,empty);
 		return st;
 	}
-	//handler methods
+/****** handler methods for various operators ******/
+
 	void handleChar(char t,Stack<PartialNFA> ns)
 	{
 		State s0 = createState();
@@ -81,6 +83,8 @@ class NFA extends PartialNFA
 		graph = new HashMap<State,ArrayList<Edge> >();  //doubt
 		//parsing the regex
 		String pf = Util.regexToPostfix(p);
+		//initialize alphabet set
+		alphabet = new ArrayList<Character>(Util.getAlphabets(pf));
 		Stack<PartialNFA> ps = new Stack<PartialNFA>();
 		for(int i=0;i<pf.length();i++)
 		{
@@ -186,8 +190,8 @@ class NFA extends PartialNFA
 			System.out.println();
 		}
 	}
-	//testing
-	//convert to dfa
+/*******  DFA ***********/
+
 	boolean isFinal(Set<State> st)
 	{
 		for(State s : st)
@@ -198,32 +202,20 @@ class NFA extends PartialNFA
 		return false;
 	}
 
-	void toDFA()
+	DFA toDFA()
 	{
-		int count = -1;
-		int size = alphabet.length;
-		Set<State> NFAstates = graph.keySet();
-		//Set<DFAState> DFAStateSet = new HashSet<DFAState>();
+		int count = -1;   //0-based indexing of DFA states
+		State DFAStart;
+		int size = alphabet.size();
 		Map<Set<State>,State> DFAStateSet = new HashMap<Set<State>,State>();  //doubt
-		ArrayList<int[]> transTable = new ArrayList<int[]>();
-		/*List<State> states = new ArrayList<State>(NFAstates);
-		Collections.sort(states,new Comparator<State>(){
-			public int compare(State s1,State s2)
-			{
-				return (s1.num < s2.num ? -1 : 1);
-			}
-		});
-
-		for(State s : states)
-		{
-			System.out.println(s.num);
-		}*/
+		ArrayList<State[]> transTable = new ArrayList<State[]>();
 		//get eps-clos of starting state
 		Queue<Set<State>> q = new LinkedList<Set<State>>();
 		HashSet<State> startEPSClos = EPSClos(start);
-		transTable.add(new int[size]);
+		transTable.add(new State[size]);
 		count++;
-		DFAStateSet.put(startEPSClos,new State(count));
+		DFAStart = new State(count);
+		DFAStateSet.put(startEPSClos,DFAStart);
 		q.add(startEPSClos);
 		while(!q.isEmpty())
 		{
@@ -233,31 +225,21 @@ class NFA extends PartialNFA
 				HashSet<State> next = new HashSet<State>();
 				for(State s : curr)
 				{
-					addState(move(s,alphabet[i]),next);
+					addState(move(s,alphabet.get(i)),next);
 				}
 				if(!DFAStateSet.containsKey(next))
 				{
 					count++;
-					transTable.add(new int[size]);
+					transTable.add(new State[size]);
 					boolean label = isFinal(next);
 					DFAStateSet.put(next,new State(count,label));
-					//transTable.get(DFAStateSet.get(curr))[i] = count;
 					q.add(next);
 				}
-				transTable.get(DFAStateSet.get(curr).num)[i] = DFAStateSet.get(next).num;
+				transTable.get(DFAStateSet.get(curr).num)[i] = DFAStateSet.get(next);
 			}
 		}
-		System.out.println("done");
-		//print table
-		for(int[] row : transTable)
-		{
-			for(int i : row)
-				System.out.print(i + " ");
-			System.out.println();
-		}
-		for(State s : DFAStateSet.values())
-		{
-			System.out.println(s.num + "," + s.isEnd);
-		}
+		System.out.println("DFA generated");
+		
+		return new DFA(alphabet,DFAStateSet,transTable,DFAStart);
 	}
 }

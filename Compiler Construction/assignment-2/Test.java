@@ -9,16 +9,21 @@ class Test
 		re = sc.next();
 		NFA nfa = new NFA(re);
 		System.out.println("NFA generated");
-		nfa.display();
 		String s;
-		System.out.println("enter input string");
+		System.out.println("Enter input string");
 		s = sc.next();
 		boolean res = nfa.simulate(s);
 		if(res)
-			System.out.println("accepted");
+			System.out.println("Input string accepted by NFA");
 		else
-			System.out.println("rejected");
-		//DFA testig
-		nfa.toDFA();
+			System.out.println("Input string rejected by NFA");
+		System.out.println("Press 1 to generate DFA from NFA");
+		int response = sc.nextInt();
+		if(response == 1)
+		{
+			DFA dfa = nfa.toDFA();
+			dfa.display();
+			dfa.simulate(s);
+		}
 	}
 }
