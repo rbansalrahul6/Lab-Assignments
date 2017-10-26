@@ -24,7 +24,7 @@ public:
 typedef pair<char,state> edge;
 typedef vector<edge> trans;
 const char EPS = '$';
-map<state,trans> G;
+map<state,trans> G;   //nfa graph
 
 class NFA
 {
@@ -36,10 +36,10 @@ public:
 	{
 		start = s;
 		end = e;
-		e.is_end = true;
+		end.is_end = true;
 	}
 /******helper method*******/
-	void add_state(state s,set<state>& st)
+	void add_state(state s,set<state>& st)  //finds e-closure of state s
 	{
 		if(st.find(s)!=st.end())
 			return;
